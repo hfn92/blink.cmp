@@ -108,6 +108,13 @@ end
 
 function list.fuzzy(context, items_by_source)
   local fuzzy = require('blink.cmp.fuzzy')
+
+  local kw = context.get_keyword()
+
+  for _, item in ipairs(items_by_source['luasnip']) do
+    item.score_offset = item.label == kw and 500 or -3
+  end
+
   local filtered_items = fuzzy.fuzzy(context.get_keyword(), items_by_source)
 
   -- apply the per source max_items
