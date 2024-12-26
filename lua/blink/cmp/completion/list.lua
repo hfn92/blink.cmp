@@ -115,7 +115,7 @@ function list.fuzzy(context, items_by_source)
     item.score_offset = item.label == kw and 500 or -3
   end
 
-  local filtered_items = fuzzy.fuzzy(context.get_keyword(), items_by_source)
+  local filtered_items = fuzzy.fuzzy(kw, items_by_source)
 
   -- apply the per source max_items
   filtered_items = require('blink.cmp.sources.lib').apply_max_items_for_completions(context, filtered_items)

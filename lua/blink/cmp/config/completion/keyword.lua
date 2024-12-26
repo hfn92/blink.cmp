@@ -4,6 +4,7 @@
 --- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
 --- @field range blink.cmp.CompletionKeywordRange
 --- @field regex string Regex used to get the text when fuzzy matching
+--- @field custom_matcher fun(line:string) used to get the text when fuzzy matching
 --- @field exclude_from_prefix_regex string After matching with regex, any characters matching this regex at the prefix will be excluded
 ---
 --- @alias blink.cmp.CompletionKeywordRange
@@ -17,6 +18,7 @@ local keyword = {
     range = 'prefix',
     regex = '[-_]\\|\\k',
     exclude_from_prefix_regex = '-',
+    custom_matcher = function() end,
   },
 }
 
@@ -28,6 +30,7 @@ function keyword.validate(config)
       'one of: prefix, full',
     },
     regex = { config.regex, 'string' },
+    custom_matcher = { config.custom_matcher, 'function' },
     exclude_from_prefix_regex = { config.exclude_from_prefix_regex, 'string' },
   }, config)
 end

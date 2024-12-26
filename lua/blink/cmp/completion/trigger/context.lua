@@ -43,6 +43,7 @@
 --- @field trigger_character? string
 
 local keyword_regex = vim.regex(require('blink.cmp.config').completion.keyword.regex)
+local custom_matcher = require('blink.cmp.config').completion.keyword.custom_matcher
 
 --- @type blink.cmp.Context
 --- @diagnostic disable-next-line: missing-fields
@@ -72,7 +73,9 @@ end
 function context.get_keyword()
   local keyword = require('blink.cmp.config').completion.keyword
   local range = context.get_regex_around_cursor(keyword.range, keyword.regex, keyword.exclude_from_prefix_regex)
-  return string.sub(context.get_line(), range.start_col, range.start_col + range.length - 1)
+  local res = string.sub(context.get_line(), range.start_col, range.start_col + range.length - 1)
+  -- vim.notify('> ' .. res .. ' ' .. vim.inspect(range))
+  return res
 end
 
 --- @param cursor number[]
@@ -158,6 +161,15 @@ function context.get_regex_around_cursor(range, regex_str, exclude_from_prefix_r
 
   -- Search backward for the start of the word
   local line_before = line:sub(1, current_col - 1)
+
+  do
+    local start = custom_matcher(line_before)
+    if start then
+      start = start + 1
+      return { start_col = start, length = current_col - start }
+    end
+  end
+
   local before_match_start, _ = backward_regex:match_str(line_before)
   if before_match_start ~= nil then
     start_col = before_match_start + 1
