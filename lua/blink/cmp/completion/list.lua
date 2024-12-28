@@ -111,8 +111,10 @@ function list.fuzzy(context, items_by_source)
 
   local kw = context.get_keyword()
 
-  for _, item in ipairs(items_by_source['luasnip']) do
-    item.score_offset = item.label == kw and 500 or -3
+  if items_by_source['luasnip'] then
+    for _, item in ipairs(items_by_source['luasnip']) do
+      item.score_offset = item.label == kw and 500 or -3
+    end
   end
 
   local filtered_items = fuzzy.fuzzy(kw, items_by_source)

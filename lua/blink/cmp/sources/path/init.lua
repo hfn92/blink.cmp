@@ -34,6 +34,9 @@ function path:get_completions(context, callback)
 
   local lib = require('blink.cmp.sources.path.lib')
 
+  -- vim.notify(vim.inspect(context))
+  -- vim.notify(vim.inspect(context:get_keyword()))
+
   local dirname = lib.dirname(PATH_REGEX, self.opts.get_cwd, context)
   if not dirname then return callback({ is_incomplete_forward = false, is_incomplete_backward = false, items = {} }) end
 
