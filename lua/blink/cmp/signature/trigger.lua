@@ -62,7 +62,10 @@ function trigger.activate()
       local char_under_cursor = vim.api.nvim_get_current_line():sub(cursor_col, cursor_col)
       local is_on_trigger = trigger.is_trigger_character(char_under_cursor)
 
-      if config.show_on_insert_on_trigger_character and is_on_trigger and event == 'InsertEnter' then
+      if
+        -- config.show_on_insert_on_trigger_character and is_on_trigger and
+        event == 'InsertEnter'
+      then
         trigger.show({ trigger_character = char_under_cursor })
       elseif event == 'CursorMoved' and trigger.context ~= nil then
         trigger.show()

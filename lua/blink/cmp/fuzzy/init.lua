@@ -70,7 +70,7 @@ function fuzzy.fuzzy(line, cursor_col, haystacks_by_provider, range)
     require('blink.cmp.fuzzy').get_keyword_range(line, cursor_col, config.completion.keyword.range)
   local keyword_length = keyword_end_col - keyword_start_col
   local keyword = line:sub(-keyword_length - 1)
-  vim.notify(keyword)
+  -- vim.notify(keyword)
 
   local filtered_items = {}
   for provider_id, haystack in pairs(haystacks_by_provider) do
