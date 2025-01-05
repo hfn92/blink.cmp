@@ -69,6 +69,8 @@ function fuzzy.fuzzy(line, cursor_col, haystacks_by_provider, range)
   local keyword_start_col, keyword_end_col =
     require('blink.cmp.fuzzy').get_keyword_range(line, cursor_col, config.completion.keyword.range)
   local keyword_length = keyword_end_col - keyword_start_col
+  local keyword = line:sub(-keyword_length - 1)
+  vim.notify(keyword)
 
   local filtered_items = {}
   for provider_id, haystack in pairs(haystacks_by_provider) do
@@ -91,6 +93,7 @@ function fuzzy.fuzzy(line, cursor_col, haystacks_by_provider, range)
     for idx, item_index in ipairs(matched_indices) do
       local item = haystack[item_index + 1]
       item.score = scores[idx]
+      if provider_id == 'luasnip' and keyword == item.label then item.score = 500 end
       table.insert(filtered_items, item)
     end
   end
@@ -98,11 +101,26 @@ function fuzzy.fuzzy(line, cursor_col, haystacks_by_provider, range)
   return require('blink.cmp.fuzzy.sort').sort(filtered_items, config.fuzzy.sorts)
 end
 
+local custom_matcher = require('blink.cmp.config').completion.keyword.custom_matcher
+
 --- @param line string
 --- @param col number
 --- @param range? blink.cmp.CompletionKeywordRange
 --- @return number, number
 function fuzzy.get_keyword_range(line, col, range)
+  -- vim.notify(vim.inspect({ require('blink.cmp.fuzzy.rust').get_keyword_range(line, col, range == 'full') }))
+  do
+    local start = custom_matcher(line)
+    if start then
+      start = start + 1
+      -- vim.notify('--> ' .. vim.inspect({
+      --   start,
+      --   col,
+      -- }))
+
+      return start, col
+    end
+  end
   return require('blink.cmp.fuzzy.rust').get_keyword_range(line, col, range == 'full')
 end
 

@@ -3,6 +3,7 @@
 --- 'full' will fuzzy match on the text before *and* after the cursor
 --- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
 --- @field range blink.cmp.CompletionKeywordRange
+--- @field custom_matcher fun(line:string) used to get the text when fuzzy matching
 ---
 --- @alias blink.cmp.CompletionKeywordRange
 --- | 'prefix' Fuzzy match on the text before the cursor (example: 'foo_|bar' will match 'foo_')
@@ -11,11 +12,12 @@
 local validate = require('blink.cmp.config.utils').validate
 local keyword = {
   --- @type blink.cmp.CompletionKeywordConfig
-  default = { range = 'prefix' },
+  default = { range = 'prefix', custom_matcher = function() end },
 }
 
 function keyword.validate(config)
   validate('completion.keyword', {
+    custom_matcher = { config.custom_matcher, 'function' },
     range = {
       config.range,
       function(range) return vim.tbl_contains({ 'prefix', 'full' }, range) end,
