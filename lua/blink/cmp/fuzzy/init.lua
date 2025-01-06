@@ -66,10 +66,11 @@ function fuzzy.fuzzy(line, cursor_col, haystacks_by_provider, range)
   local nearby_text = table.concat(vim.api.nvim_buf_get_lines(0, start_row, end_row, false), '\n')
   local nearby_words = #nearby_text < 10000 and fuzzy.rust.get_words(nearby_text) or {}
 
+  line = line:sub(0, cursor_col)
   local keyword_start_col, keyword_end_col =
     require('blink.cmp.fuzzy').get_keyword_range(line, cursor_col, config.completion.keyword.range)
   local keyword_length = keyword_end_col - keyword_start_col
-  local keyword = line:sub(-keyword_length - 1)
+  local keyword = line:sub(keyword_start_col, keyword_end_col)
   -- vim.notify(keyword)
 
   local filtered_items = {}
@@ -110,6 +111,7 @@ local custom_matcher = require('blink.cmp.config').completion.keyword.custom_mat
 function fuzzy.get_keyword_range(line, col, range)
   -- vim.notify(vim.inspect({ require('blink.cmp.fuzzy.rust').get_keyword_range(line, col, range == 'full') }))
   do
+    -- vim.notify(string.sub(line, 0, col))
     local start = custom_matcher(line)
     if start then
       start = start + 1
